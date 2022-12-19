@@ -28,6 +28,9 @@ export default new Vuex.Store({
     async login({ state }, payload) {
       const { email, password } = payload;
       state.user = await axios({
+        headers : {
+          'Access-Control-Allow-Origin' : 'https://clean-socks-fry-18-143-186-245.loca.lt',
+        },
         withCredentials : true,
         method: "POST",
         url: BASE_URL + '/users/login',
