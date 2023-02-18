@@ -1,3 +1,3 @@
-const BASE_URL = 'https://388b-18-143-186-245.ap.ngrok.io'
+const BASE_URL = 'https://api.yourpipe.dev' // no need "/"
 
 export {BASE_URL}

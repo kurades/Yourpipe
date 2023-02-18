@@ -22,13 +22,16 @@ export default new Vuex.Store({
     },
     addAudioList(state, payload) {
       state.audioList.push(payload)
+    },
+    removeAudioList(state){
+      state.audioList = null;
     }
   },
   actions: {
     async login({ state }, payload) {
       const { email, password } = payload;
       state.user = await axios({
-        withCredentials : true,
+        withCredentials: true,
         method: "POST",
         url: BASE_URL + '/users/login',
         data: {
@@ -46,18 +49,41 @@ export default new Vuex.Store({
           throw value.response.data;
         })
     },
+    async register({ state }, payload) {
+      const { username, email, password } = payload;
+      state.user = await axios({
+        withCredentials: true,
+        method: "POST",
+        url: BASE_URL + '/users/register',
+        data: {
+          username,
+          email,
+          password,
+        },
+      })
+        .then((value) => {
+          state.user = value.data;
+          localStorage.setItem("user", JSON.stringify(value.data))
+          console.log(value);
+          return value.data
+        })
+        .catch((value) => {
+          throw value.response.data;
+        })
+    },
 
-    logout({ state }) {
+    logout({ state,commit }) {
       localStorage.removeItem("user");
       state.user = null;
       router.push({ name: 'login' });
+      commit('removeAudioList')
     },
 
     async getAudioList({ state, commit }) {
       state.audioList = await axios({
         method: "GET",
         url: BASE_URL + '/music/queue',
-        withCredentials : true,
+        withCredentials: true,
         headers: {
           auth_token: getCookie('token'),
         },

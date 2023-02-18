@@ -13,17 +13,8 @@
     </v-card>
 
     <div>
-      <v-text-field
-        name="name"
-        placeholder="Type link here"
-        solo
-        class="mt-3"
-        :rules="youtubeRules"
-        v-model="link"
-        @keydown.enter="submitLink"
-        :loading="submitLoading"
-        :disabled="submitLoading"
-      ></v-text-field>
+      <v-text-field name="name" placeholder="Type link here" solo class="mt-3" :rules="youtubeRules" v-model="link"
+        @keydown.enter="submitLink" :loading="submitLoading" :disabled="submitLoading"></v-text-field>
 
       <v-simple-table>
         <template v-slot:default>
@@ -37,50 +28,57 @@
               <th>Action</th>
             </tr>
           </thead>
-          <tbody>
-            <tr
-              v-for="(item, index) in audioList"
-              class="cursor-pointer"
-              :key="item._id"
-              @click="activeSheet(item, index)"
-            >
-              <td>{{ index + 1 }}</td>
-              <td>
-                <v-img
-                  :src="item.thumbnail"
-                  width="70"
-                  height="70"
-                  class="ma-0"
-                ></v-img>
-              </td>
-              <td>
-                <span>{{ item.title }}</span>
-              </td>
-              <td>
-                <span>{{ item.author.name }}</span>
-              </td>
-              <td>
-                <span>{{ item.timeStamp }}</span>
-              </td>
-              <td>
-                <v-btn
-                  color="error"
-                  @click.stop="deleteQueue(item.videoId)"
-                  :loading="buttonLoading"
-                  >Delete</v-btn
-                >
+          <tbody v-if="!playlistLoading">
+            <template v-if="audioList.length !== 0">
+                <tr v-for="(item, index) in audioList" class="cursor-pointer" :key="item._id"
+                  @click="activeSheet(item, index)">
+                  <td>{{ index + 1 }}</td>
+                  <td>
+                    <v-img :src="item.thumbnail" width="70" height="70" class="ma-0"></v-img>
+                  </td>
+                  <td>
+                    <span>{{ item.title }}</span>
+                  </td>
+                  <td>
+                    <span>{{ item.author.name }}</span>
+                  </td>
+                  <td>
+                    <span>{{ item.timeStamp }}</span>
+                  </td>
+                  <td>
+                    <v-btn color="error" @click.stop="deleteQueue(item.videoId)" :loading="buttonLoading">Delete</v-btn>
+                  </td>
+                </tr>
+            </template>
+            <template v-else>
+              <tr>
+                <td :colspan="6" class="text-center py-5">
+                  <h3>Nothing in here yet</h3>
+                </td>
+              </tr>
+            </template>
+
+          </tbody>
+          <tbody v-else>
+            <tr>
+              <td :colspan="6" class="text-center py-5">
+                <v-progress-circular :size="35" indeterminate color="primary"></v-progress-circular>
               </td>
             </tr>
           </tbody>
+          <!-- <tbody v-show="user.playlist.length === 0">
+            <tr>
+              <td :colspan="6" class="text-center py-5" >
+                <h3>Nothing in here yet</h3>
+              </td>
+            </tr>
+          </tbody> -->
+
         </template>
       </v-simple-table>
     </div>
-    <bottom-sheet
-      :sheet="sheet"
-      :chosen="chosen"
-      @nextTrack="nextTrack"
-      @prevTrack="prevTrack"
-    ></bottom-sheet>
+    <bottom-sheet v-if="chosen" :sheet="sheet" :chosen="chosen" @nextTrack="nextTrack"
+      @prevTrack="prevTrack"></bottom-sheet>
   </v-container>
 </template>
 
@@ -103,6 +101,7 @@ export default {
       ],
       submitLoading: false,
       buttonLoading: false,
+      playlistLoading: true,
       sheet: false,
       chosen: null,
       index: -1,
@@ -148,16 +147,25 @@ export default {
       return ret;
     },
     nextTrack: function () {
-      if (this.audioList.length > ++this.index)
-        this.chosen = this.audioList[this.index];
+      let i = this.index;
+      if (this.audioList.length > ++i) {
+        this.chosen = this.audioList[i];
+        this.index++;
+      }
     },
     prevTrack: function () {
-      if (--this.index >= 0)
+      let i = this.index;
+      if (--i >= 0) {
         this.chosen = this.audioList[this.index];
+        this.index--;
+      }
     },
   },
   created() {
-    this.getAudioList();
+    this.getAudioList()
+      .then(() => {
+        this.playlistLoading = false;
+      })
   },
 };
 </script>
