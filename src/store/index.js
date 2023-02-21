@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { BASE_URL } from '@/constant'
+// import { BASE_URL } from '@/constant'
 import axios from 'axios'
 import router from '@/router'
 Vue.use(Vuex)
@@ -33,6 +33,7 @@ export default new Vuex.Store({
       state.user = await axios({
         withCredentials: true,
         method: "POST",
+        
         url: BASE_URL + '/users/login',
         data: {
           email,
