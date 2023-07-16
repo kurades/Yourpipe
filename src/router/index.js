@@ -21,12 +21,22 @@ const routes = [
       requiresAuth: true,
 
     }
+  },
+  {
+    // Add this route to exclude the /api path
+    path: '*',
+    beforeEnter: (to, from, next) => {
+      if (to.path.startsWith('/api')) {
+        next();
+      } else {
+        next({ path: '/404' });
+      }
+    }
   }
 ]
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
   routes
 })
 

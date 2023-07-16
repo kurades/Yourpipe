@@ -33,8 +33,7 @@ export default new Vuex.Store({
       state.user = await axios({
         withCredentials: true,
         method: "POST",
-        
-        url: BASE_URL + '/users/login',
+        url: '/api/users/login',
         data: {
           email,
           password,
@@ -55,7 +54,7 @@ export default new Vuex.Store({
       state.user = await axios({
         withCredentials: true,
         method: "POST",
-        url: BASE_URL + '/users/register',
+        url: 'api/users/register',
         data: {
           username,
           email,
@@ -83,10 +82,10 @@ export default new Vuex.Store({
     async getAudioList({ state, commit }) {
       state.audioList = await axios({
         method: "GET",
-        url: BASE_URL + '/music/queue',
+        url: '/api/music/queue',
         withCredentials: true,
         headers: {
-          auth_token: getCookie('token'),
+          'auth-token': getCookie('token'),
         },
 
       }).then((value) => {
@@ -101,9 +100,9 @@ export default new Vuex.Store({
     async updateQueue({ state, commit }, payload) {
       state.audioList = await axios({
         method: "PUT",
-        url: BASE_URL + '/music/queue',
+        url: '/api/music/queue',
         headers: {
-          auth_token: getCookie('token'),
+          "auth-token": getCookie('token'),
         },
         params: {
           videoId: payload,
@@ -116,9 +115,9 @@ export default new Vuex.Store({
       })
     },
     async deleteQueue({ state }, payload) {
-      await axios.delete(`${BASE_URL}/music/queue`, {
+      await axios.delete(`/api/music/queue`, {
         headers: {
-          auth_token: getCookie('token'),
+          'auth-token': getCookie('token'),
         },
         params: {
           videoId: payload,
