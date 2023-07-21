@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import { BASE_URL } from '@/constant'
-import axios from 'axios'
+import { BASE_URL } from '@/constant'
+import Axios from 'axios'
 import router from '@/router'
 Vue.use(Vuex)
 function getCookie(name) {
@@ -9,6 +9,9 @@ function getCookie(name) {
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop().split(';').shift();
 }
+const axios = Axios.create({
+  baseURL : BASE_URL
+})
 export default new Vuex.Store({
   state: {
     user: JSON.parse(localStorage.getItem("user")) || null,
